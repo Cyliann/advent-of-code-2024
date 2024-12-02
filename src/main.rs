@@ -1,4 +1,7 @@
-use std::io::{self, BufRead};
+use std::{
+    cmp,
+    io::{self, BufRead},
+};
 
 fn main() {
     let reports = read_input();
@@ -11,7 +14,7 @@ fn main() {
     print!("{:?}", safe_reports);
 }
 
-fn parse_report(mut report: Vec<i32>, dampener_used: bool) -> i32 {
+fn parse_report(report: Vec<i32>, dampener_used: bool) -> i32 {
     let rising = report[0] < report[1];
 
     for (i, num) in report.iter().enumerate() {
@@ -19,11 +22,15 @@ fn parse_report(mut report: Vec<i32>, dampener_used: bool) -> i32 {
             let order = if rising { next > num } else { next < num };
 
             if num == next || (num - next).abs() > 3 || !order {
-                if !dampener_used {
-                    report.remove(i + 1);
-                    return parse_report(report, true);
+                if dampener_used {
+                    return 0;
                 }
-                return 0;
+                let mut no_i1_vec = report.clone();
+                let mut no_i_vec = report.clone();
+                no_i1_vec.remove(i + 1);
+                no_i_vec.remove(i);
+
+                return cmp::max(parse_report(no_i1_vec, true), parse_report(no_i_vec, true));
             }
         } else {
             break;
