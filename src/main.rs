@@ -5,19 +5,24 @@ fn main() {
 
     updates.retain(|update| is_valid(update, &rules));
 
-    dbg!(updates);
+    let sum: i32 = updates.iter().map(|pages| pages[pages.len() / 2]).sum();
+
+    println!("Sum is: {}", sum)
 }
 
 fn is_valid(update: &Vec<i32>, rules: &Vec<(i32, i32)>) -> bool {
-    for (a, b) in rules {
-        // println!("{}, {}", a, b);
+    for tuple in rules.iter() {
+        let (a, b) = tuple;
+
         if let Some(index_b) = update.iter().position(|x| x == b) {
             if let Some(index_a) = update.iter().position(|x| x == a) {
-                return index_a < index_b;
+                if index_a > index_b {
+                    return false;
+                };
             }
         }
     }
-    return false;
+    return true;
 }
 
 fn read_input(filename: &str) -> (Vec<(i32, i32)>, Vec<Vec<i32>>) {
@@ -32,9 +37,9 @@ fn read_input(filename: &str) -> (Vec<(i32, i32)>, Vec<Vec<i32>>) {
         }
         if before_empty_line {
             let capture = line.split("|").collect::<Vec<&str>>();
-            let a = capture[0];
-            let b = capture[1];
-            rules.push((a.parse::<i32>().unwrap(), b.parse::<i32>().unwrap()));
+            let a = capture[0].parse::<i32>().unwrap();
+            let b = capture[1].parse::<i32>().unwrap();
+            rules.push((a, b));
         } else {
             updates.push(
                 line.split(",")
