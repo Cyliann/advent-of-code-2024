@@ -32,16 +32,6 @@ impl Guard {
 fn main() {
     let mut map = read_input("./src/day 6/input.txt");
 
-    // let mut obstacles: Vec<(usize, usize)> = vec![];
-
-    // for (row_index, row) in map.iter().enumerate() {
-    //     for (item_index, item) in row.iter().enumerate() {
-    //         if *item == '#' {
-    //             obstacles.push((row_index, item_index));
-    //         }
-    //     }
-    // }
-
     let mut guard = get_guard(&map);
     loop {
         let in_front = in_front(&guard);
