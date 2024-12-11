@@ -2,7 +2,6 @@ use std::fs::read_to_string;
 
 fn main() {
     let mut stones = read_input("./src/day 11/input.txt");
-    dbg!(&stones);
 
     stones = blink(stones, 25);
     println!("{:?}", stones.len());
@@ -10,32 +9,32 @@ fn main() {
 
 fn blink(mut stones: Vec<u64>, num_of_blinks: u64) -> Vec<u64> {
     for _ in 0..num_of_blinks {
-        let mut i = 0;
+        let mut temp = vec![];
 
-        while i < stones.len() {
-            let stone = stones[i];
-            if stone == 0 {
-                stones[i] = 1;
+        for stone in stones.iter_mut() {
+            if *stone == 0 {
+                *stone = 1;
 
-                i += 1;
                 continue;
             }
 
-            if stone.to_string().len() % 2 == 0 {
-                let whole = stone.to_string();
-                let left = &whole[..whole.len() / 2];
-                let right = &whole[whole.len() / 2..];
+            let length = stone.checked_ilog10().unwrap() + 1;
+            if length % 2 == 0 {
+                let mask = (10 as u64).pow(length / 2);
+                let left = *stone / mask;
+                let right = *stone % mask;
 
-                stones.remove(i);
-                stones.insert(i, right.parse().unwrap());
-                stones.insert(i, left.parse().unwrap());
+                *stone = right;
+                temp.push(left);
 
-                i += 2;
                 continue;
             }
 
-            stones[i] = stone * 2024;
-            i += 1;
+            *stone = *stone * 2024;
+        }
+
+        for item in temp {
+            stones.push(item);
         }
     }
     return stones;
@@ -46,7 +45,7 @@ fn read_input(path: &str) -> Vec<u64> {
 
     for line in read_to_string(path).unwrap().lines() {
         stones.extend(
-            line.split(" ")
+            line.split_ascii_whitespace()
                 .map(|x| x.parse::<u64>().unwrap())
                 .collect::<Vec<u64>>(),
         );
@@ -54,3 +53,4 @@ fn read_input(path: &str) -> Vec<u64> {
 
     return stones;
 }
+

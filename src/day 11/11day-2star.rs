@@ -33,7 +33,7 @@ fn blink(stones: Vec<u64>, num_of_blinks: u64) -> HashMap<u64, u64> {
                 to_remove.push(*key);
                 continue;
             }
-            let length = get_length(*key);
+            let length = key.checked_ilog10().unwrap() + 1;
             if length % 2 == 0 {
                 let mask = (10 as u64).pow(length / 2);
                 let left = *key / mask;
@@ -65,37 +65,12 @@ fn blink(stones: Vec<u64>, num_of_blinks: u64) -> HashMap<u64, u64> {
     return memo;
 }
 
-// faster than parsing to string
-fn get_length(mut number: u64) -> u32 {
-    let mut length = 1;
-    if number >= 10000000000000000 {
-        length += 16;
-        number /= 10000000000000000;
-    }
-    if number >= 100000000 {
-        length += 8;
-        number /= 100000000;
-    }
-    if number >= 10000 {
-        length += 4;
-        number /= 10000;
-    }
-    if number >= 100 {
-        length += 2;
-        number /= 100;
-    }
-    if number >= 10 {
-        length += 1;
-    }
-    return length;
-}
-
 fn read_input(path: &str) -> Vec<u64> {
     let mut stones = vec![];
 
     for line in read_to_string(path).unwrap().lines() {
         stones.extend(
-            line.split(" ")
+            line.split_ascii_whitespace()
                 .map(|x| x.parse::<u64>().unwrap())
                 .collect::<Vec<u64>>(),
         );
@@ -103,3 +78,4 @@ fn read_input(path: &str) -> Vec<u64> {
 
     return stones;
 }
+
