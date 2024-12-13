@@ -1,5 +1,3 @@
-use eqsolver::multivariable::MultiVarNewtonFD;
-use nalgebra::{vector, ComplexField, Vector2};
 use regex::Regex;
 
 fn main() {
